@@ -3,7 +3,7 @@ using UnityEngine;
 public class HandlerB : MonoBehaviour
 {
     [Header("Status")]
-    [field: SerializeField] public HandlerA handlerA { get; set; }
+    public HandlerA handlerA { get; set; }
     [SerializeField] private bool clicked = false;
 
     void Awake()
@@ -19,10 +19,15 @@ public class HandlerB : MonoBehaviour
             if (handlerA != null)
             {
                 handlerA.point += 1;
-                //handlerA.activeList.Remove(this.gameObject);
+                handlerA.activeList.Remove(this.gameObject);
             }
 
-            //Destroy(this.gameObject);
+            DestroyObject();
         }
+    }
+
+    public void DestroyObject()
+    {
+        Destroy(this.gameObject);
     }
 }
