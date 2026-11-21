@@ -138,7 +138,22 @@ public class HandlerA : MonoBehaviour
             {
                 if (obj != null)
                 {
-                    obj.transform.position = new Vector3(obj.transform.position.x, Random.Range(1f, 11f), obj.transform.position.z);
+                    if (isObjectBRotating)
+                    {
+                        var rb = obj.GetComponent<Rigidbody>();
+                        rb.useGravity = false;
+                        rb.linearVelocity = Vector3.zero;
+                        rb.angularVelocity = Vector3.zero;
+                        rb.isKinematic = true;
+
+                        obj.transform.position = new Vector3(obj.transform.position.x, Random.Range(1f, 11f), obj.transform.position.z);
+                    }
+                    else
+                    {
+                        var rb = obj.GetComponent<Rigidbody>();
+                        rb.useGravity = true;
+                        rb.isKinematic = false;
+                    }
                 }
             }
         }
@@ -155,7 +170,7 @@ public class HandlerA : MonoBehaviour
                 {
                     if (obj != null)
                     {
-                        obj.transform.Rotate(Vector3.up * rotationSpeed * Time.deltaTime);
+                        obj.transform.Rotate(new Vector3(1f, 1f, 0.6f) * rotationSpeed * Time.deltaTime);
                     }
                 }
             }
