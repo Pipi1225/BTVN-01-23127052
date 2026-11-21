@@ -31,8 +31,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 4.75938, y: 0, z: 5.5509}
-  m_LocalScale: {x: 2, y: 2, z: 2}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -155,5 +155,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6263110938df4064cad2c85972ba7a16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HandlerGameObjectB
-  <handlerA>k__BackingField: {fileID: 0}
   clicked: 0

@@ -18,8 +18,8 @@ public class HandlerB : MonoBehaviour
             clicked = true;
             if (handlerA != null)
             {
-                handlerA.point += 1;
-                handlerA.activeList.Remove(this.gameObject);
+                handlerA.points += 1;
+                handlerA.activeList.Remove(gameObject);
             }
 
             DestroyObject();
@@ -28,6 +28,6 @@ public class HandlerB : MonoBehaviour
 
     public void DestroyObject()
     {
-        Destroy(this.gameObject);
+        Destroy(gameObject);
     }
 }

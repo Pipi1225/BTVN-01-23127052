@@ -7,17 +7,28 @@ public class HandlerA : MonoBehaviour
     public const string fullName = "Duong Gia Huy";
     
     [field: Header("Points")]
-    public int point { get; set; } = 0;
+    public int points { get; set; } = 0;
 
     [Header("Movement & Force")]
     [SerializeField] private float moveSpeed = 10f;
     [SerializeField] private float force = 10f;
     [SerializeField] private float rotationSpeed = 10f;
+    [SerializeField] private float autoMoveSpeed = 2 + mssv % 10;
 
     [Header("Status")]
     [SerializeField] private bool isDeleting = false;
     [SerializeField] private float deleteTimer = 0f;
     [SerializeField] private bool isRotating = false;
+    [SerializeField] private bool isObjectBRotating = false;
+
+
+    private enum autoMoving { None, Y, X, Z };
+
+    [Header("Auto Moving Status")]
+    autoMoving isAutoMoving = autoMoving.None;
+    [SerializeField] private Vector3 startPosM;
+    [SerializeField] private float moveDistance = 5f;
+    [SerializeField] private int moveDir = 1;
 
     [Header("Spawn Object B")]
     [SerializeField] private GameObject prefabB;
@@ -26,11 +37,21 @@ public class HandlerA : MonoBehaviour
     [Header("List Object B")]
     public List<GameObject> activeList = new List<GameObject>();
 
+    private Renderer renderer;
+
     void Start()
     {
         isDeleting = false;
         deleteTimer = 0f;
         isRotating = false;
+        isObjectBRotating = false;
+        isAutoMoving = autoMoving.None;
+
+        startPosM = transform.position;
+
+        autoMoveSpeed = 2 + mssv % 10;
+
+        renderer = GetComponent<Renderer>();
 
         // 1
         float randomX = Random.Range(10f, 20f);
@@ -53,7 +74,7 @@ public class HandlerA : MonoBehaviour
             float posZ = Random.Range(-10f, 10f);
 
             GameObject newB = Instantiate(prefabB, new Vector3(posX, posY, posZ), Quaternion.identity);
-            if (newB is not null)
+            if (newB != null)
             {
                 newB.GetComponent<HandlerB>().handlerA = this;
             }
@@ -87,8 +108,8 @@ public class HandlerA : MonoBehaviour
                     deleteTimer = 0f;
                     int randomIndex = Random.Range(0, activeList.Count);
 
-                    activeList.RemoveAt(randomIndex);
                     GameObject targetB = activeList[randomIndex];
+                    activeList.RemoveAt(randomIndex);
                     if (targetB != null)
                     {
                         targetB.GetComponent<HandlerB>()?.DestroyObject();
@@ -109,5 +130,117 @@ public class HandlerA : MonoBehaviour
         }
 
         // 6
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            isObjectBRotating = !isObjectBRotating;
+
+            foreach (GameObject obj in activeList)
+            {
+                if (obj != null)
+                {
+                    obj.transform.position = new Vector3(obj.transform.position.x, Random.Range(1f, 11f), obj.transform.position.z);
+                }
+            }
+        }
+
+        if (isObjectBRotating)
+        {
+            if (activeList.Count == 0)
+            {
+                isObjectBRotating = false;
+            }
+            else
+            {
+                foreach (GameObject obj in activeList)
+                {
+                    if (obj != null)
+                    {
+                        obj.transform.Rotate(Vector3.up * rotationSpeed * Time.deltaTime);
+                    }
+                }
+            }
+        }
+
+        // 7
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            startPosM = transform.position;
+            isAutoMoving = (autoMoving)(((int)isAutoMoving + 1) % 4);
+        }
+
+        if (isAutoMoving != autoMoving.None)
+        {
+            Vector3 moveDirection = Vector3.zero;
+            float currentPosition = 0f;
+            float maxPosition = 0f;
+            switch (isAutoMoving)
+            {
+                case autoMoving.X:
+                    moveDirection = Vector3.right;
+                    currentPosition = transform.position.x;
+                    maxPosition = startPosM.x;
+                    break;
+                case autoMoving.Y:
+                    moveDirection = Vector3.up;
+                    currentPosition = transform.position.y;
+                    maxPosition = startPosM.y;
+                    break;
+                case autoMoving.Z:
+                    moveDirection = Vector3.forward;
+                    currentPosition = transform.position.z;
+                    maxPosition = startPosM.z;
+                    break;
+            }
+
+            transform.Translate(moveDirection * autoMoveSpeed * moveDir * Time.deltaTime, Space.World);
+            if (currentPosition >= maxPosition + moveDistance)
+            {
+                moveDir = -1;
+            }
+            else if (currentPosition <= maxPosition - moveDistance)
+            {
+                moveDir = 1;
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            foreach (GameObject obj in activeList)
+            {
+                if (obj != null)
+                {
+                    obj.GetComponent<Renderer>().material.color = new Color(Random.value, Random.value, Random.value);
+                }
+            }
+        }
+    }
+
+    // 8
+    void OnMouseEnter()
+    {
+        if (renderer != null)
+        {
+            renderer.material.color = hoverColor;
+        }
+    }
+
+    void OnMouseExit()
+    {
+        if (renderer != null)
+        {
+            renderer.material.color = Color.white;
+        }
+    }
+
+    // 9
+
+    void OnGUI()
+    {
+        GUIStyle style = new GUIStyle
+        {
+            fontSize = 25
+        };
+        style.normal.textColor = Color.white;
+        GUI.Label(new Rect(10, 10, 300, 60), "Points: " + points, style);
     }
 }
