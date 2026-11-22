@@ -87,9 +87,9 @@ public class HandlerA : MonoBehaviour
                 newB.GetComponent<HandlerB>().handlerA = this;
                 Vector3 randomForce = new Vector3(Random.Range(-force, force), force, Random.Range(-force, force));
                 newB.GetComponent<Rigidbody>()?.AddForce(randomForce);
-            }
 
-            activeList.Add(newB);
+                activeList.Add(newB);
+            }
         }
 
         // 4
