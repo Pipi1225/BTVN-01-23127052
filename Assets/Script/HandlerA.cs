@@ -5,8 +5,6 @@ public class HandlerA : MonoBehaviour
 {
     public const int mssv = 23127052;
     public const string fullName = "Duong Gia Huy";
-    
-    [field: Header("Points")]
     public int points { get; set; } = 0;
 
     [Header("Movement & Force")]
@@ -20,19 +18,27 @@ public class HandlerA : MonoBehaviour
     [SerializeField] private float deleteTimer = 0f;
     [SerializeField] private bool isRotating = false;
     [SerializeField] private bool isObjectBRotating = false;
+    [SerializeField] private bool isEating = false;
+    
+    [Header("Scale Status")]
+    [SerializeField] private float scaleMultiplier = 1.5f;
+    [SerializeField] private float scaleSpeed = 5f;
+    private Vector3 originalScale;
 
 
     private enum autoMoving { None, Y, X, Z };
 
     [Header("Auto Moving Status")]
-    autoMoving isAutoMoving = autoMoving.None;
+    [SerializeField] private autoMoving isAutoMoving = autoMoving.None;
     [SerializeField] private Vector3 startPosM;
     [SerializeField] private float moveDistance = 5f;
     [SerializeField] private int moveDir = 1;
 
+    [Header("Hover Object")]
+    [SerializeField] private Color hoverColor;
+
     [Header("Spawn Object B")]
     [SerializeField] private GameObject prefabB;
-    [SerializeField] private Color hoverColor;
 
     [Header("List Object B")]
     public List<GameObject> activeList = new List<GameObject>();
@@ -48,6 +54,7 @@ public class HandlerA : MonoBehaviour
         isAutoMoving = autoMoving.None;
 
         startPosM = transform.position;
+        originalScale = transform.localScale;
 
         autoMoveSpeed = 2 + mssv % 10;
 
@@ -179,7 +186,10 @@ public class HandlerA : MonoBehaviour
         // 7
         if (Input.GetKeyDown(KeyCode.M))
         {
-            startPosM = transform.position;
+            if (isAutoMoving == autoMoving.None)
+            {
+                startPosM = transform.position;
+            }
             isAutoMoving = (autoMoving)(((int)isAutoMoving + 1) % 4);
         }
 
@@ -228,6 +238,20 @@ public class HandlerA : MonoBehaviour
                 }
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            isEating = !isEating;
+        }
+
+        if (isEating)
+        {
+            transform.localScale = Vector3.MoveTowards(transform.localScale, originalScale * scaleMultiplier, Time.deltaTime * scaleSpeed);
+        }
+        else
+        {
+            transform.localScale = Vector3.MoveTowards(transform.localScale, originalScale, Time.deltaTime * scaleSpeed);
+        }
     }
 
     // 8
@@ -257,5 +281,23 @@ public class HandlerA : MonoBehaviour
         };
         style.normal.textColor = Color.white;
         GUI.Label(new Rect(10, 10, 300, 60), "Points: " + points, style);
+        GUI.Label(new Rect(10, 45, 300, 40), "Eat Mode (V): " + (isEating ? "ON" : "OFF"), style);
+    }
+
+    void OnTriggerStay(Collider collision)
+    {
+        if (!isEating)
+        {
+            return;
+        }
+
+        if (collision.gameObject.CompareTag("ObjectB"))
+        {
+            if (activeList.Remove(collision.gameObject))
+            {
+                points += 2;
+                collision.gameObject.GetComponent<HandlerB>()?.DestroyObject();
+            }
+        }
     }
 }
