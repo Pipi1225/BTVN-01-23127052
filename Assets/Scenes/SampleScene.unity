@@ -586,7 +586,7 @@ MonoBehaviour:
   isRotating: 0
   isObjectBRotating: 0
   isEating: 0
-  scaleMultiplier: 1.5
+  scaleMultiplier: 2
   scaleSpeed: 5
   isAutoMoving: 0
   startPosM: {x: 0, y: 0, z: 0}

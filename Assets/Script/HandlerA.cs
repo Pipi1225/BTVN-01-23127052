@@ -202,37 +202,38 @@ public class HandlerA : MonoBehaviour
         {
             Vector3 moveDirection = Vector3.zero;
             float currentPosition = 0f;
-            float maxPosition = 0f;
+            float centerPosition = 0f;
             switch (isAutoMoving)
             {
                 case autoMoving.X:
                     moveDirection = Vector3.right;
                     currentPosition = transform.position.x;
-                    maxPosition = startPosM.x;
+                    centerPosition = startPosM.x;
                     break;
                 case autoMoving.Y:
                     moveDirection = Vector3.up;
                     currentPosition = transform.position.y;
-                    maxPosition = startPosM.y;
+                    centerPosition = startPosM.y;
                     break;
                 case autoMoving.Z:
                     moveDirection = Vector3.forward;
                     currentPosition = transform.position.z;
-                    maxPosition = startPosM.z;
+                    centerPosition = startPosM.z;
                     break;
             }
 
             transform.Translate(moveDirection * autoMoveSpeed * moveDir * Time.deltaTime, Space.World);
-            if (currentPosition >= maxPosition + moveDistance)
+            if (currentPosition >= centerPosition + moveDistance)
             {
                 moveDir = -1;
             }
-            else if (currentPosition <= maxPosition - moveDistance)
+            else if (currentPosition <= centerPosition - moveDistance)
             {
                 moveDir = 1;
             }
         }
 
+        // 9
         if (Input.GetKeyDown(KeyCode.C))
         {
             foreach (GameObject obj in activeList)
@@ -244,6 +245,7 @@ public class HandlerA : MonoBehaviour
             }
         }
 
+        // Custom feature
         if (Input.GetKeyDown(KeyCode.V))
         {
             isEating = !isEating;
@@ -276,8 +278,7 @@ public class HandlerA : MonoBehaviour
         }
     }
 
-    // 9
-
+    // 10
     void OnGUI()
     {
         GUIStyle style = new GUIStyle
@@ -300,7 +301,7 @@ public class HandlerA : MonoBehaviour
         {
             if (activeList.Remove(collision.gameObject))
             {
-                points += 2;
+                points += 3;
                 collision.gameObject.GetComponent<HandlerB>()?.DestroyObject();
             }
         }
