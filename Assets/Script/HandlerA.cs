@@ -43,7 +43,7 @@ public class HandlerA : MonoBehaviour
     [Header("List Object B")]
     public List<GameObject> activeList = new List<GameObject>();
 
-    private Renderer renderer;
+    private Renderer meshRenderer;
 
     void Start()
     {
@@ -58,7 +58,7 @@ public class HandlerA : MonoBehaviour
 
         autoMoveSpeed = 2 + mssv % 10;
 
-        renderer = GetComponent<Renderer>();
+        meshRenderer = GetComponent<Renderer>();
 
         // 1
         float randomX = Random.Range(10f, 20f);
@@ -257,17 +257,17 @@ public class HandlerA : MonoBehaviour
     // 8
     void OnMouseEnter()
     {
-        if (renderer != null)
+        if (meshRenderer != null)
         {
-            renderer.material.color = hoverColor;
+            meshRenderer.material.color = hoverColor;
         }
     }
 
     void OnMouseExit()
     {
-        if (renderer != null)
+        if (meshRenderer != null)
         {
-            renderer.material.color = Color.white;
+            meshRenderer.material.color = Color.white;
         }
     }
 
