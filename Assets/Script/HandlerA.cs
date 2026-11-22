@@ -5,13 +5,13 @@ public class HandlerA : MonoBehaviour
 {
     public const int mssv = 23127052;
     public const string fullName = "Duong Gia Huy";
-    public int points { get; set; } = 0;
+    public int points = 0;
 
     [Header("Movement & Force")]
     [SerializeField] private float moveSpeed = 10f;
     [SerializeField] private float force = 10f;
     [SerializeField] private float rotationSpeed = 10f;
-    [SerializeField] private float autoMoveSpeed = 2 + mssv % 10;
+    private float autoMoveSpeed = 2 + mssv % 10;
 
     [Header("Status")]
     [SerializeField] private bool isDeleting = false;
@@ -51,10 +51,8 @@ public class HandlerA : MonoBehaviour
         deleteTimer = 0f;
         isRotating = false;
         isObjectBRotating = false;
+        isEating = false;
         isAutoMoving = autoMoving.None;
-
-        startPosM = transform.position;
-        originalScale = transform.localScale;
 
         autoMoveSpeed = 2 + mssv % 10;
 
@@ -63,6 +61,9 @@ public class HandlerA : MonoBehaviour
         // 1
         float randomX = Random.Range(10f, 20f);
         transform.position = new Vector3(0, randomX, 0);
+
+        startPosM = transform.position;
+        originalScale = transform.localScale;
     }
 
     void Update()
@@ -84,16 +85,15 @@ public class HandlerA : MonoBehaviour
             if (newB != null)
             {
                 newB.GetComponent<HandlerB>().handlerA = this;
+                Vector3 randomForce = new Vector3(Random.Range(-force, force), force, Random.Range(-force, force));
+                newB.GetComponent<Rigidbody>()?.AddForce(randomForce);
             }
-            
-            Vector3 randomForce = new Vector3(Random.Range(-force, force), force, Random.Range(-force, force));
-            newB.GetComponent<Rigidbody>()?.AddForce(randomForce);
 
             activeList.Add(newB);
         }
 
         // 4
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetKeyDown(KeyCode.Q) && !isDeleting)
         {
             isDeleting = true;
             deleteTimer = 0f;
@@ -186,11 +186,16 @@ public class HandlerA : MonoBehaviour
         // 7
         if (Input.GetKeyDown(KeyCode.M))
         {
+            // isAutoMoving = (autoMoving)(((int)isAutoMoving + 1) % 4);
             if (isAutoMoving == autoMoving.None)
             {
                 startPosM = transform.position;
+                isAutoMoving = autoMoving.Z;
             }
-            isAutoMoving = (autoMoving)(((int)isAutoMoving + 1) % 4);
+            else
+            {
+                isAutoMoving = autoMoving.None;
+            }
         }
 
         if (isAutoMoving != autoMoving.None)

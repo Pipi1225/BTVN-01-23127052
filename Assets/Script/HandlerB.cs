@@ -2,8 +2,7 @@ using UnityEngine;
 
 public class HandlerB : MonoBehaviour
 {
-    [Header("Status")]
-    public HandlerA handlerA { get; set; }
+    public HandlerA handlerA;
     [SerializeField] private bool clicked = false;
 
     void Awake()
@@ -16,10 +15,9 @@ public class HandlerB : MonoBehaviour
         if (!clicked)
         {
             clicked = true;
-            if (handlerA != null)
+            if (handlerA != null && handlerA.activeList.Remove(gameObject))
             {
                 handlerA.points += 1;
-                handlerA.activeList.Remove(gameObject);
             }
 
             DestroyObject();
